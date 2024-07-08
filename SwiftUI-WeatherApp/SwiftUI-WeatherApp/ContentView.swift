@@ -7,36 +7,56 @@
 
 import SwiftUI
 
+struct WeekWeatherModel {
+    var weekName: String
+    var imageName: String
+    var temperature: Int
+}
+
+
 struct ContentView: View {
+    
+    @State private var isNight = false
+    
+    let weekData = [
+            WeekWeatherModel(weekName: "Mon", imageName: "sun.max.fill", temperature: 76),
+            WeekWeatherModel(weekName: "Tue", imageName: "cloud.sun.fill", temperature: 60),
+            WeekWeatherModel(weekName: "Wed", imageName: "wind", temperature: 72),
+            WeekWeatherModel(weekName: "Thu", imageName: "sunset.fill", temperature: 75),
+            WeekWeatherModel(weekName: "Fri", imageName: "cloud.sun.fill", temperature: 72)
+        ]
+    
     var body: some View {
         ZStack {
-            BackGroundView()
+            
+            BackGroundView(isNight: $isNight)
+            
             VStack {
                 
                 CityNameView(cityName: "Cupertino, CA")
-                WeatherView(temperature: "76°", icon:  "cloud.sun.fill")
+                WeatherView(temperature: "76°", 
+                            icon:  isNight ? "moon.stars.fill" : "cloud.sun.fill")
                     
                 HStack(spacing: 20) {
-                    WeekWeather(weekName: "Mon",
-                                imageName: "sun.max.fill",
-                                temperature: 76)
                     
-                    WeekWeather(weekName: "Tue",
-                                imageName: "cloud.sun.fill",
-                                temperature: 60)
+                    ForEach(weekData,id: \.weekName) { day in
+                        WeekWeather(weekName: day.weekName,
+                                    imageName: day.imageName,
+                                    temperature: day.temperature)
+                        
+                    }
                     
-                    WeekWeather(weekName: "Wed", 
-                                imageName: "wind",
-                                temperature: 72)
-                    
-                    WeekWeather(weekName: "Thu",
-                                imageName: "sunset.fill",
-                                temperature: 75)
-                    
-                    WeekWeather(weekName: "Fri", 
-                                imageName: "cloud.sun.fill",
-                                temperature: 72)
 
+                }
+                Spacer()
+                
+                Button {
+                    print("Button tapped")
+                    isNight.toggle()
+                } label: {
+                    ButtonTextView(title: isNight ? "Change day Time." : "Change night Time",
+                                   textColor: .blue,
+                                   backGroundColor: .white)
                 }
                 Spacer()
             }
@@ -44,6 +64,12 @@ struct ContentView: View {
         }
     }
 }
+
+#Preview {
+    ContentView()
+}
+
+
 struct WeekWeather: View {
     
     var weekName: String
@@ -83,14 +109,7 @@ struct CityNameView: View {
     }
 }
 
-struct BackGroundView: View {
-    var body: some View {
-        LinearGradient(colors: [.blue, .white],
-                       startPoint: .topLeading,
-                       endPoint: .bottomTrailing)
-        .ignoresSafeArea()
-    }
-}
+
 struct WeatherView: View {
     var temperature: String
     var icon: String
@@ -112,6 +131,18 @@ struct WeatherView: View {
         
 }
 
-#Preview {
-    ContentView()
+struct BackGroundView: View {
+    
+    @Binding var isNight: Bool
+    
+    var body: some View {
+        LinearGradient(colors: [isNight ? .black : .blue,
+                                isNight ? .gray : .appBlue],
+                       startPoint: .topLeading,
+                       endPoint: .bottomTrailing)
+        .ignoresSafeArea()
+    }
 }
+
+
+
