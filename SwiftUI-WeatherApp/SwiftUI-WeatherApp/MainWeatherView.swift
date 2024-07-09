@@ -14,29 +14,30 @@ struct WeekWeatherModel {
 }
 
 
-struct ContentView: View {
+struct MainWeatherView: View {
     
     @State private var isNight = false
     
     let weekData = [
-            WeekWeatherModel(weekName: "Mon", imageName: "sun.max.fill", temperature: 76),
-            WeekWeatherModel(weekName: "Tue", imageName: "cloud.sun.fill", temperature: 60),
-            WeekWeatherModel(weekName: "Wed", imageName: "wind", temperature: 72),
-            WeekWeatherModel(weekName: "Thu", imageName: "sunset.fill", temperature: 75),
-            WeekWeatherModel(weekName: "Fri", imageName: "cloud.sun.fill", temperature: 72)
-        ]
+        WeekWeatherModel(weekName: "Mon", imageName: "sun.max.fill", temperature: 76),
+        WeekWeatherModel(weekName: "Tue", imageName: "cloud.sun.fill", temperature: 60),
+        WeekWeatherModel(weekName: "Wed", imageName: "wind", temperature: 72),
+        WeekWeatherModel(weekName: "Thu", imageName: "sunset.fill", temperature: 75),
+        WeekWeatherModel(weekName: "Fri", imageName: "cloud.sun.fill", temperature: 72)
+    ]
     
     var body: some View {
+        
         ZStack {
             
-            BackGroundView(isNight: $isNight)
+            BackGroundView(isNight: isNight)
             
             VStack {
                 
                 CityNameView(cityName: "Cupertino, CA")
-                WeatherView(temperature: "76°", 
+                WeatherView(temperature: "76°",
                             icon:  isNight ? "moon.stars.fill" : "cloud.sun.fill")
-                    
+                
                 HStack(spacing: 20) {
                     
                     ForEach(weekData,id: \.weekName) { day in
@@ -45,8 +46,6 @@ struct ContentView: View {
                                     temperature: day.temperature)
                         
                     }
-                    
-
                 }
                 Spacer()
                 
@@ -62,11 +61,12 @@ struct ContentView: View {
             }
             
         }
+        
     }
 }
 
 #Preview {
-    ContentView()
+    MainWeatherView()
 }
 
 
@@ -83,7 +83,7 @@ struct WeekWeather: View {
                 .foregroundStyle(.white)
                 .padding(.bottom)
             Image(systemName: imageName)
-                .renderingMode(.original)
+                .symbolRenderingMode(.multicolor)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
@@ -117,7 +117,7 @@ struct WeatherView: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .renderingMode(.original)
+                .symbolRenderingMode(.multicolor)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 180, height: 180)
@@ -128,12 +128,12 @@ struct WeatherView: View {
         }
         .padding(.bottom, 40)
     }
-        
+    
 }
 
 struct BackGroundView: View {
     
-    @Binding var isNight: Bool
+    var isNight: Bool
     
     var body: some View {
         LinearGradient(colors: [isNight ? .black : .blue,
